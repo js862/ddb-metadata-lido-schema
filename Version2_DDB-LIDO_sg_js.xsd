@@ -1,0 +1,768 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema 
+  xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="qualified" targetNamespace="http://www.lido-schema.org" 
+  xmlns:lido="http://www.lido-schema.org"
+  xmlns:sch="http://purl.oclc.org/dsdl/schematron">
+  
+  <!-- ??? -->
+  
+  <xs:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="http://www.w3.org/2001/03/xml.xsd"/>
+  <xs:import namespace="http://www.opengis.net/gml" schemaLocation="http://schemas.opengis.net/gml/3.1.1/base/gml.xsd"/>
+  
+  <!-- Definition der Elemente --> 
+  <xs:element name="lidoWrap"> <!-- Wrapper-Element? -->
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="lido:lido"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="lido">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="lido:lidoRecID"/>
+        <xs:element ref="lido:descriptiveMetadata"/>
+        <xs:element ref="lido:administrativeMetadata"/>
+      </xs:sequence>
+      <xs:attribute name="relatedencoding" use="required" form="qualified"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="lidoRecID"> <!-- Erste Elementmodellierung --> 
+    <xs:complexType>
+      <xs:simpleContent>
+        <xs:extension base="xs:NCName"> <!-- ???? -->
+          <xs:attribute name="type" use="required" form="qualified" type="xs:anyURI"/>
+        </xs:extension>
+      </xs:simpleContent>
+    </xs:complexType>
+  </xs:element>
+ 
+  <xs:element name="descriptiveMetadata">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="lido:objectClassificationWrap"/>
+        <xs:element ref="lido:objectIdentificationWrap"/>
+        <xs:element ref="lido:eventWrap"/>
+        <xs:element ref="lido:objectRelationWrap"/>
+      </xs:sequence>
+      <xs:attribute ref="xml:lang" use="required"/>   <!-- Attribut "xml:lang" --> 
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="objectClassificationWrap"> <!-- Wrapper-Element -->
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="lido:objectWorkTypeWrap"/>
+        <xs:element ref="lido:classificationWrap"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="objectWorkTypeWrap"> <!-- Wrapper-Element -->
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="lido:objectWorkType"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="objectWorkType">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="1" maxOccurs="unbounded" ref="lido:conceptID"/> <!-- SG und JS evtl. nein minOccurs="1" -->
+        <xs:element maxOccurs="unbounded" ref="lido:term"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="classificationWrap"> <!-- Wrapper-Element -->
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element maxOccurs="unbounded" ref="lido:classification"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="classification">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" ref="lido:conceptID"/>
+        <xs:element maxOccurs="unbounded" ref="lido:term"/>
+      </xs:sequence>
+      <xs:attribute name="type" use="required" form="qualified" type="xs:anyURI"/> <!-- Attribut bezieht sich auf Classification -->
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="objectIdentificationWrap"> <!-- Wrapper-Element -->
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="lido:titleWrap"/>
+        <xs:element ref="lido:inscriptionsWrap"/>
+        <xs:element ref="lido:repositoryWrap"/>
+        <xs:element ref="lido:objectDescriptionWrap"/>
+        <xs:element ref="lido:objectMeasurementsWrap"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="titleWrap"> <!-- Wrapper-Element -->
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="lido:titleSet"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="titleSet">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="lido:appellationValue"/>
+      </xs:sequence>
+      <xs:attribute name="type" use="required" form="qualified" type="xs:anyURI"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="inscriptionsWrap"> <!-- Wrapper-Element, Anpassung von xs: element zu xs:complexType verursacht Fehlermeldung-->
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="lido:inscriptions" maxOccurs="unbounded"/> <!-- Reihenfolge von ref= und maxOccurs= egal -->
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="inscriptions">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="lido:inscriptionTranscription"/>
+        <xs:element ref="lido:inscriptionDescription"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="inscriptionTranscription"> <!-- Datentyp hinzugefügt -->
+    <xs:complexType mixed="true"> <!-- Was bedeutet mixed="true" hier? -->
+      <xs:attribute ref="xml:lang" use="required"/> <!-- wie die möglichen Uris hinzufügen -->
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="inscriptionDescription" type="lido:descriptiveNoteValue"/>
+  <xs:element name="repositoryWrap">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="lido:repositorySet"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="repositorySet">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="lido:repositoryName"/>
+        <xs:element maxOccurs="unbounded" ref="lido:workID"/>
+        <xs:element ref="lido:repositoryLocation"/>
+      </xs:sequence>
+      <xs:attribute name="type" use="required" form="qualified" type="xs:anyURI"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="repositoryName">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="lido:legalBodyID"/>
+        <xs:element ref="lido:legalBodyName"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="workID">
+    <xs:complexType mixed="true">
+      <xs:attribute name="type" use="required" form="qualified" type="xs:anyURI"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="repositoryLocation">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="lido:placeID"/>
+        <xs:element ref="lido:namePlaceSet"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="objectDescriptionWrap">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element maxOccurs="unbounded" ref="lido:objectDescriptionSet"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="objectDescriptionSet">
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="lido:descriptiveNoteValue">
+          <xs:attribute name="type" use="required" form="qualified" type="xs:anyURI"/>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="objectMeasurementsWrap">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element maxOccurs="unbounded" ref="lido:objectMeasurementsSet"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="objectMeasurementsSet">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="lido:displayObjectMeasurements"/>
+        <xs:element ref="lido:objectMeasurements"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="displayObjectMeasurements" type="xs:string"/>
+  <xs:element name="objectMeasurements">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element maxOccurs="unbounded" ref="lido:measurementsSet"/>
+        <xs:element ref="lido:extentMeasurements"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="measurementsSet">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element maxOccurs="unbounded" ref="lido:measurementType"/>
+        <xs:element ref="lido:measurementUnit"/>
+        <xs:element ref="lido:measurementValue"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="measurementType">
+    <xs:complexType>
+      <xs:simpleContent>
+        <xs:extension base="xs:NCName">
+          <xs:attribute ref="xml:lang" use="required"/>
+        </xs:extension>
+      </xs:simpleContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="measurementUnit" type="xs:NCName"/>
+  <xs:element name="measurementValue" type="xs:string"/>
+  <xs:element name="extentMeasurements" type="xs:string"/>
+  <xs:element name="eventWrap">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="lido:eventSet"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="eventSet">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="lido:event"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="event">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="lido:eventType"/>
+        <xs:element maxOccurs="unbounded" ref="lido:eventActor"/>
+        <xs:element ref="lido:eventDate"/>
+        <xs:element maxOccurs="unbounded" ref="lido:periodName"/>
+        <xs:element ref="lido:eventPlace"/>
+        <xs:element maxOccurs="unbounded" ref="lido:eventMaterialsTech"/>
+        <xs:element ref="lido:eventDescriptionSet"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="eventType">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="lido:conceptID"/>
+        <xs:element maxOccurs="unbounded" ref="lido:term"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="eventActor">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="lido:displayActorInRole"/>
+        <xs:element ref="lido:actorInRole"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="displayActorInRole">
+    <xs:complexType mixed="true">
+      <xs:attribute ref="xml:lang" use="required"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="actorInRole">
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="lido:actor">
+          <xs:sequence>
+            <xs:element ref="lido:roleActor"/>
+            <xs:element ref="lido:extentActor"/>
+          </xs:sequence>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="roleActor">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element maxOccurs="unbounded" ref="lido:conceptID"/>
+        <xs:element ref="lido:term"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="extentActor" type="xs:string"/>
+  <xs:element name="eventDate">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element maxOccurs="unbounded" ref="lido:displayDate"/>
+        <xs:element ref="lido:date"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="displayDate">
+    <xs:complexType mixed="true">
+      <xs:attribute ref="xml:lang" use="required"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="date">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="lido:earliestDate"/>
+        <xs:element ref="lido:latestDate"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="earliestDate" type="xs:integer"/>
+  <xs:element name="latestDate" type="xs:integer"/>
+  <xs:element name="periodName">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="lido:conceptID"/>
+        <xs:element maxOccurs="unbounded" ref="lido:term"/>
+      </xs:sequence>
+      <xs:attribute name="type" use="required" form="qualified" type="xs:anyURI"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="eventPlace">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="lido:place"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="eventMaterialsTech">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="lido:displayMaterialsTech"/>
+        <xs:element ref="lido:materialsTech"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="displayMaterialsTech">
+    <xs:complexType mixed="true">
+      <xs:attribute ref="xml:lang" use="required"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="materialsTech">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element maxOccurs="unbounded" ref="lido:termMaterialsTech"/>
+        <xs:element minOccurs="0" ref="lido:extentMaterialsTech"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="termMaterialsTech">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element maxOccurs="unbounded" ref="lido:conceptID"/>
+        <xs:element maxOccurs="unbounded" ref="lido:term"/>
+      </xs:sequence>
+      <xs:attribute name="type" use="required" form="qualified" type="xs:anyURI"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="extentMaterialsTech" type="xs:string"/>
+  <xs:element name="eventDescriptionSet" type="lido:descriptiveNoteValue"/>
+  <xs:element name="objectRelationWrap">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="lido:subjectWrap"/>
+        <xs:element ref="lido:relatedWorksWrap"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="subjectWrap">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element maxOccurs="unbounded" ref="lido:subjectSet"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="subjectSet">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" ref="lido:displaySubject"/>
+        <xs:element ref="lido:subject"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="displaySubject">
+    <xs:complexType mixed="true">
+      <xs:attribute ref="xml:lang" use="required"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="subject">
+    <xs:complexType>
+      <xs:choice>
+        <xs:element ref="lido:subjectActor"/>
+        <xs:element ref="lido:subjectConcept"/>
+        <xs:element ref="lido:subjectPlace"/>
+      </xs:choice>
+      <xs:attribute name="type" use="required" form="qualified" type="xs:anyURI"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="subjectActor" type="lido:actor"/>
+  <xs:element name="subjectConcept">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element maxOccurs="unbounded" ref="lido:conceptID"/>
+        <xs:element maxOccurs="unbounded" ref="lido:term"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="subjectPlace">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" ref="lido:displayPlace"/>
+        <xs:element ref="lido:place"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="displayPlace">
+    <xs:complexType mixed="true">
+      <xs:attribute ref="xml:lang" use="required"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="relatedWorksWrap">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="lido:relatedWorkSet"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="relatedWorkSet">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="lido:relatedWork"/>
+        <xs:element ref="lido:relatedWorkRelType"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="relatedWork">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="lido:object"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="object">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="lido:objectWebResource"/>
+        <xs:element ref="lido:objectNote"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="objectWebResource" type="xs:anyURI"/>
+  <xs:element name="objectNote" type="xs:string"/>
+  <xs:element name="relatedWorkRelType">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="lido:conceptID"/>
+        <xs:element maxOccurs="unbounded" ref="lido:term"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  
+  <xs:element name="administrativeMetadata">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="lido:rightsWorkWrap"/>
+        <xs:element ref="lido:recordWrap"/>
+        <xs:element ref="lido:resourceWrap"/>
+      </xs:sequence>
+      <xs:attribute ref="xml:lang" use="required"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="rightsWorkWrap">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="lido:rightsWorkSet"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="rightsWorkSet">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="lido:rightsHolder"/>
+        <xs:element ref="lido:creditLine"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="creditLine">
+    <xs:complexType mixed="true">
+      <xs:attribute ref="xml:lang" use="required"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="recordWrap">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="lido:recordID"/>
+        <xs:element ref="lido:recordType"/>
+        <xs:element maxOccurs="unbounded" ref="lido:recordSource"/>
+        <xs:element ref="lido:recordRights"/>
+        <xs:element maxOccurs="unbounded" ref="lido:recordInfoSet"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="recordID">
+    <xs:complexType>
+      <xs:simpleContent>
+        <xs:extension base="xs:NCName">
+          <xs:attribute name="type" use="required" form="qualified" type="xs:anyURI"/>
+        </xs:extension>
+      </xs:simpleContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="recordType">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="lido:conceptID"/>
+        <xs:element maxOccurs="unbounded" ref="lido:term"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="recordSource">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="lido:legalBodyID"/>
+        <xs:element ref="lido:legalBodyName"/>
+      </xs:sequence>
+      <xs:attribute name="type" form="qualified" type="xs:NCName"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="recordRights">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="lido:rightsType"/>
+        <xs:element ref="lido:rightsHolder"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="recordInfoSet">
+    <xs:complexType>
+      <xs:choice>
+        <xs:element ref="lido:recordInfoLink"/>
+        <xs:element ref="lido:recordMetadataDate"/>
+      </xs:choice>
+      <xs:attribute name="type" use="required" form="qualified" type="xs:anyURI"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="recordInfoLink">
+    <xs:complexType>
+      <xs:simpleContent>
+        <xs:extension base="xs:anyURI">
+          <xs:attribute name="formatResource" use="required" form="qualified"/>
+          <xs:attribute ref="xml:lang" use="required"/>
+        </xs:extension>
+      </xs:simpleContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="recordMetadataDate">
+    <xs:complexType>
+      <xs:simpleContent>
+        <xs:extension base="xs:dateTime">
+          <xs:attribute name="type" use="required" form="qualified" type="xs:anyURI"/>
+        </xs:extension>
+      </xs:simpleContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="resourceWrap">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element maxOccurs="unbounded" ref="lido:resourceSet"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="resourceSet">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="lido:resourceRepresentation"/>
+        <xs:element ref="lido:resourceType"/>
+        <xs:element minOccurs="0" ref="lido:resourceDescription"/>
+        <xs:element ref="lido:resourceSource"/>
+        <xs:element ref="lido:rightsResource"/>
+      </xs:sequence>
+      <xs:attribute name="sortorder" use="required" form="qualified" type="xs:integer"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="resourceRepresentation">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="lido:linkResource"/>
+      </xs:sequence>
+      <xs:attribute name="type" use="required" form="qualified" type="xs:anyURI"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="linkResource">
+    <xs:complexType>
+      <xs:simpleContent>
+        <xs:extension base="xs:anyURI">
+          <xs:attribute name="formatResource" use="required" form="qualified"/>
+        </xs:extension>
+      </xs:simpleContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="resourceType">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element maxOccurs="unbounded" ref="lido:term"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="resourceDescription">
+    <xs:complexType mixed="true">
+      <xs:attribute ref="xml:lang" use="required"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="resourceSource">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="lido:legalBodyName"/>
+      </xs:sequence>
+      <xs:attribute name="type" use="required" form="qualified" type="xs:NCName"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="rightsResource">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="lido:rightsType"/>
+        <xs:element ref="lido:rightsHolder"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  
+  <xs:element name="conceptID"> <!-- hier wird das Element conceptID definiert -->
+    <xs:complexType>
+      <xs:simpleContent>
+        <xs:extension base="xs:anyURI">
+          <xs:attribute name="type" use="required" form="qualified" type="xs:anyURI"/>
+        </xs:extension>
+      </xs:simpleContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="term"> <!-- hier wird das Element term definiert -->
+    <xs:complexType mixed="true">
+      <xs:attribute ref="xml:lang" use="required"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="appellationValue">
+    <xs:complexType mixed="true">
+      <xs:attribute ref="xml:lang"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:complexType name="descriptiveNoteValue">
+    <xs:sequence>
+      <xs:element ref="lido:descriptiveNoteValue"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="descriptiveNoteValue">
+    <xs:complexType mixed="true">
+      <xs:attribute ref="xml:lang" use="required"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="legalBodyID">
+    <xs:complexType>
+      <xs:simpleContent>
+        <xs:extension base="xs:anyURI">
+          <xs:attribute name="type" use="required" form="qualified" type="xs:anyURI"/>
+        </xs:extension>
+      </xs:simpleContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="legalBodyName">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element maxOccurs="unbounded" ref="lido:appellationValue"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="placeID">
+    <xs:complexType>
+      <xs:simpleContent>
+        <xs:extension base="xs:anyURI">
+          <xs:attribute name="type" use="required" form="qualified" type="xs:anyURI"/>
+        </xs:extension>
+      </xs:simpleContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="namePlaceSet">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element maxOccurs="unbounded" ref="lido:appellationValue"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:complexType name="actor">
+    <xs:sequence>
+      <xs:element ref="lido:actor"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="actor">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element maxOccurs="unbounded" ref="lido:actorID"/>
+        <xs:element ref="lido:nameActorSet"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="actorID">
+    <xs:complexType>
+      <xs:simpleContent>
+        <xs:extension base="xs:anyURI">
+          <xs:attribute name="type" use="required" form="qualified" type="xs:anyURI"/>
+        </xs:extension>
+      </xs:simpleContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="nameActorSet">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="lido:appellationValue"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="place">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element maxOccurs="unbounded" ref="lido:placeID"/>
+        <xs:element ref="lido:namePlaceSet"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="rightsHolder">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="lido:legalBodyID"/>
+        <xs:element ref="lido:legalBodyName"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="rightsType">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="lido:conceptID"/>
+        <xs:element ref="lido:term"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+ 
+  <!-- Attribute -->
+  <xs:attribute name="lang" type="xs:NCName" id="lang"></xs:attribute> <!-- Attribute: muss das xml:lang heißen, warum kommt dann eine Fehlermeldung-->
+  <xs:attribute name="pref" type="xs:string" id="pref"></xs:attribute>
+  <xs:attribute name="type" type="xs:string" id="type"></xs:attribute>
+  <!-- Attribute: type, label, xml:lang, pref und sortorder kommen im DDB-LIDO-AP vor-->
+  
+  <!-- Schematronregeln -->
+  
+</xs:schema>
